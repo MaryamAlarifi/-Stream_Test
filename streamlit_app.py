@@ -191,26 +191,4 @@ if not selected_data.empty:
         future_exports["Category"] == selected_category
     ].sort_values("Year")
 
-    fig_export_trend = px.line(
-        category_trend,
-        x="Year",
-        y="Predicted_Amount_EUR",
-        markers=True,
-        title=f"Predicted Export Trend for {selected_category}",
-        labels={
-            "Year": "Year",
-            "Predicted_Amount_EUR": "Predicted Amount (€)"
-        }
-    )
-
-    st.plotly_chart(
-        fig_export_trend,
-        use_container_width=True,
-        key="export_prediction_trend_chart"
-    )
-
-    # Optional: show selected row
-    st.dataframe(selected_data, use_container_width=True)
-
-else:
-    st.warning("No data available for this selection.")
+   
