@@ -35,7 +35,7 @@ with col1:
 selected_country_df = cluster_df[cluster_df["Country"] == country]
 selected_country = selected_country_df.iloc[0]
 
-
+with col1:
     st.markdown("**Country Indicators**")
 
     st.caption("Farms Number")
