@@ -145,4 +145,44 @@ with col3:
 with open("sentiment_by_search.html", "r", encoding="utf-8") as f:
     html_file = f.read()
 
-components.html(html_file, height=300, scrolling=True)
+components.html(html_file, height=500, scrolling=True)
+#######################################
+
+st.subheader("Future Export Prediction")
+
+# Read prediction data
+future_exports = pd.read_csv("future_export_predictions.csv")
+
+# Year slider
+selected_year = st.slider(
+    "Select Year",
+    int(future_exports["Year"].min()),
+    int(future_exports["Year"].max()),
+    int(future_exports["Year"].min())
+)
+
+# Category dropdown
+selected_category = st.selectbox(
+    "Select Export Category",
+    sorted(future_exports["Category"].unique())
+)
+
+# Filter data based on user selection
+selected_data = future_exports[
+    (future_exports["Year"] == selected_year) &
+    (future_exports["Category"] == selected_category)
+]
+
+# Display predicted value
+if not selected_data.empty:
+    predicted_value = selected_data["Predicted_Amount_EUR"].iloc[0]
+
+    st.metric(
+        label=f"Predicted Export Amount for {selected_category} in {selected_year}",
+        value=f"€{predicted_value:,.0f}"
+    )
+
+    st.dataframe(selected_data, use_container_width=True)
+
+else:
+    st.warning("No data available for this selection.")
