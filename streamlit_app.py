@@ -8,14 +8,11 @@ import plotly.express as px
 st.set_page_config(page_title="Agricultural ML Dashboard", layout="wide")
 
 ############################################################
-# Dashboard title and introduction
 st.title("🌾 Agricultural Dashboard")
-st.write("""
-This dashboard is designed to support farmers by helping them understand their country's readiness 
-for organic farming expansion. It also provides future predictions for Ireland's agricultural export 
-values in the coming years.
-""")
 
+st.caption(
+    "A farmer-focused dashboard for organic farming , sentiment insights, and Ireland export prediction."
+)
 ###########################################################
 # Organic farming expansion clustering section
 st.header("Organic Farming Expansion Clustering")
@@ -123,7 +120,7 @@ with col_pie:
 
     fig_pie = px.pie(
         organic_pie_df,
-       
+        values="organic_farming_share",
         names="Country",
         title="Top 10 Countries by Organic Farming Share"
     )
