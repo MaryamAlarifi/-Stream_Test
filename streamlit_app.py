@@ -25,7 +25,7 @@ cluster_df = pd.read_csv("organic_clustering_results.csv")
 ########
 ########
 # Top row: country selector, selected country indicators, cluster result, and recommendation
-col_select, col_result, col_recommend = st.columns([1.3, 1.3, 2])
+col_select, col_result, col_recommend,col_map = st.columns([1.3, 1.3, 2])
 
 with col_select:
     country = st.selectbox(
@@ -59,10 +59,7 @@ with col_recommend:
     st.write("Recommendation")
     st.success(selected_country["Recommendation"])
 
-########
 
-
-########
 # Charts row: map, organic pie chart, sentiment circles placeholder
 col_map, col_pie, col_sentiment = st.columns([2.2, 1.3, 1])
 
