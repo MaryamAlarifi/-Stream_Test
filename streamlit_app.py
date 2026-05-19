@@ -99,12 +99,14 @@ with col_map:
 
 with col_pie:
     st.subheader("Organic Farming Share")
-    organic_pie_df.loc[
-    organic_pie_df["organic_farming_share"] < 3,
-    "Country"] = "Other countries"
 
     organic_pie_df = cluster_df.copy()
     organic_pie_df = organic_pie_df.dropna(subset=["organic_farming_share"])
+
+    organic_pie_df.loc[
+        organic_pie_df["organic_farming_share"] < 3,
+        "Country"
+    ] = "Other countries"
 
     fig_pie = px.pie(
         organic_pie_df,
@@ -112,6 +114,14 @@ with col_pie:
         names="Country",
         title="Organic Farming Share by Country"
     )
+
+    fig_pie.update_layout(
+        height=550,
+        margin=dict(l=0, r=0, t=50, b=0),
+        legend_title_text="Country"
+    )
+
+    st.plotly_chart(fig_pie, use_container_width=True)
 
     fig_pie.update_layout(
         height=550,
