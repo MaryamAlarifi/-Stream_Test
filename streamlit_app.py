@@ -96,7 +96,7 @@ with col_map:
     )
 
     st.plotly_chart(fig_map, use_container_width=True)
-
+st.plotly_chart(fig_map, use_container_width=True, key="cluster_map")
 with col_pie:
     st.subheader("Organic Farming Share")
 
@@ -130,3 +130,4 @@ with col_pie:
     )
 
     st.plotly_chart(fig_pie, use_container_width=True)
+st.plotly_chart(fig_pie, use_container_width=True, key="organic_pie_chart")
