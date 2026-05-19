@@ -145,4 +145,4 @@ with col3:
 with open("sentiment_by_search.html", "r", encoding="utf-8") as f:
     html_file = f.read()
 
-components.html(html_file, height=600, scrolling=True)
+components.html(html_file, height=300, scrolling=True)
