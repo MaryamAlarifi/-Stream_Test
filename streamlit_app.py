@@ -2,7 +2,7 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
-
+import streamlit.components.v1 as components
 ############################################################
 # Page configuration
 st.set_page_config(page_title="Agricultural ML Dashboard", layout="wide")
