@@ -186,3 +186,22 @@ if not selected_data.empty:
 
 else:
     st.warning("No data available for this selection.")
+################################
+# Line chart for selected category across all years
+category_trend = future_exports[
+    future_exports["Category"] == selected_category
+]
+
+fig_export_prediction = px.line(
+    category_trend,
+    x="Year",
+    y="Predicted_Amount_EUR",
+    markers=True,
+    title=f"Predicted Export Amount Trend for {selected_category}",
+    labels={
+        "Year": "Year",
+        "Predicted_Amount_EUR": "Predicted Amount (€)"
+    }
+)
+
+st.plotly_chart(fig_export_prediction, use_container_width=True)
