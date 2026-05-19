@@ -28,9 +28,17 @@ cluster_df = pd.read_csv("organic_clustering_results.csv")
 col1, col2, col3 = st.columns([2.2,2,1.2])
 
 with col1:
+    country_list = sorted(cluster_df["Country"].unique())
+
+    if "Ireland" in country_list:
+        default_country_index = country_list.index("Ireland")
+    else:
+        default_country_index = 0
+
     country = st.selectbox(
         "Select a country",
-        sorted(cluster_df["Country"].unique()),
+        country_list,
+        index=default_country_index,
         key="country_selectbox"
     )
 
@@ -51,7 +59,6 @@ with col1:
     st.caption("Organic Farming Share")
     st.write(f"{selected_country['organic_farming_share']:.2f}%")
 
-    # Show export prediction only when Ireland is selected
     if country == "Ireland":
 
         st.subheader("Ireland Future Export Prediction")
@@ -88,8 +95,7 @@ with col1:
             st.warning("No data available for this selection.")
 
     else:
-        st.info("Future export prediction is available for Ireland only.")
-with col2:
+        st.info("Future export prediction is available for Ireland only.")with col2:
     st.metric("Selected Country", country)
     st.info(selected_country["Cluster_Label"])
 
