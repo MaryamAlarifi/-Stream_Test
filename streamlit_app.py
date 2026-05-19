@@ -151,67 +151,66 @@ components.html(html_file, height=500, scrolling=True)
 
 ################################
 
-st.subheader("Future Export Predictions by Year")
+st.subheader("Future Export Prediction")
 
 future_exports = pd.read_csv("future_export_predictions.csv")
 
-# Make sure Year is numeric
+# Make sure Year is integer
 future_exports["Year"] = future_exports["Year"].astype(int)
 
-selected_year = st.slider(
-    "Select Year for Export Prediction",
-    min_value=int(future_exports["Year"].min()),
-    max_value=int(future_exports["Year"].max()),
-    value=int(future_exports["Year"].min()),
-    step=1,
-    key="export_prediction_year_slider"
+# Year dropdown
+selected_year = st.selectbox(
+    "Select Year",
+    sorted(future_exports["Year"].unique()),
+    key="export_year_selectbox"
 )
 
-# Filter data AFTER the slider
-year_data = future_exports[future_exports["Year"] == selected_year].copy()
-
-year_data = year_data.sort_values(
-    by="Predicted_Amount_EUR",
-    ascending=False
+# Category dropdown
+selected_category = st.selectbox(
+    "Select Export Category",
+    sorted(future_exports["Category"].unique()),
+    key="export_category_selectbox"
 )
 
-st.write("Selected year:", selected_year)
-st.write("Number of rows for this year:", len(year_data))
+# Filter selected year and category
+selected_data = future_exports[
+    (future_exports["Year"] == selected_year) &
+    (future_exports["Category"] == selected_category)
+]
 
-if not year_data.empty:
-
-    top_category = year_data.iloc[0]
+if not selected_data.empty:
+    predicted_value = selected_data["Predicted_Amount_EUR"].iloc[0]
 
     st.metric(
-        label=f"Highest Predicted Export Category in {selected_year}",
-        value=top_category["Category"],
-        delta=f"€{top_category['Predicted_Amount_EUR']:,.0f}"
+        label=f"Predicted Export Amount for {selected_category} in {selected_year}",
+        value=f"€{predicted_value:,.0f}"
     )
 
-    fig_future_exports = px.bar(
-        year_data,
-        x="Category",
+    # Trend chart for selected category across all years
+    category_trend = future_exports[
+        future_exports["Category"] == selected_category
+    ].sort_values("Year")
+
+    fig_export_trend = px.line(
+        category_trend,
+        x="Year",
         y="Predicted_Amount_EUR",
-        title=f"Predicted Export Amount by Category in {selected_year}",
+        markers=True,
+        title=f"Predicted Export Trend for {selected_category}",
         labels={
-            "Category": "Export Category",
+            "Year": "Year",
             "Predicted_Amount_EUR": "Predicted Amount (€)"
-        },
-        hover_data={
-            "Predicted_Amount_EUR": ":,.0f"
         }
     )
 
-    fig_future_exports.update_layout(
-        xaxis_tickangle=-45,
-        height=600
+    st.plotly_chart(
+        fig_export_trend,
+        use_container_width=True,
+        key="export_prediction_trend_chart"
     )
 
-    st.plotly_chart(
-        fig_future_exports,
-        use_container_width=True,
-        key=f"future_exports_chart_{selected_year}"
-    )
+    # Optional: show selected row
+    st.dataframe(selected_data, use_container_width=True)
 
 else:
-    st.warning("No data available for the selected year.")
+    st.warning("No data available for this selection.")
