@@ -95,7 +95,8 @@ with col1:
             st.warning("No data available for this selection.")
 
     else:
-        st.info("Future export prediction is available for Ireland only.")with col2:
+        st.info("Future export prediction is available for Ireland only.")
+with col2:
     st.metric("Selected Country", country)
     st.info(selected_country["Cluster_Label"])
 
