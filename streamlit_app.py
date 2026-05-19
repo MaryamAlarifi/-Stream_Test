@@ -24,7 +24,7 @@ cluster_df = pd.read_csv("organic_clustering_results.csv")
 
 ########
 # Top row: country selector, cluster result, recommendation
-col_select, col_result, col_recommend = st.columns([1.2, 1.2, 2])
+col_select, col_result, col_recommend = st.columns([1.2, 1.2, 1.2])
 
 with col_select:
     country = st.selectbox(
