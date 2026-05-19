@@ -95,13 +95,12 @@ with col3:
     st.success(selected_country["Recommendation"])
 
 
-# Charts row: map, organic pie chart, sentiment circles placeholder
- col_pie, col_sentiment = st.columns([ 1.3, 1])
+
 
 
    
 
-with col_pie:
+with col3:
     st.subheader("Organic Share")
 
     organic_pie_df = cluster_df.copy()
