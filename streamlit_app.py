@@ -32,6 +32,14 @@ selected_country = cluster_df[cluster_df["Country"] == country].iloc[0]
 st.subheader("Country Cluster Result")
 
 st.metric("Selected Country", country)
+st.subheader("Dataset Preview")
+
+display_df = cluster_df.drop(
+    columns=["Cluster", "Cluster_Label"],
+    errors="ignore"
+)
+
+st.dataframe(display_df)
 st.info(selected_country["Cluster_Label"])
 
 fig_map = px.choropleth(
