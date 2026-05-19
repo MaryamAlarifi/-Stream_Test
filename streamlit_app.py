@@ -83,7 +83,7 @@ with col2:
     )
 
     fig_map.update_layout(
-        height=500,
+        height=800,
         margin=dict(l=0, r=0, t=35, b=0),
         legend_title_text="Cluster"
     )
