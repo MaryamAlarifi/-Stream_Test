@@ -103,16 +103,29 @@ with col_pie:
     organic_pie_df = cluster_df.copy()
     organic_pie_df = organic_pie_df.dropna(subset=["organic_farming_share"])
 
-    organic_pie_df.loc[
-        organic_pie_df["organic_farming_share"] < 30,
-        "Country"
-    ] = "Other countries"
+    # Sort countries by organic farming share from highest to lowest
+    organic_pie_df = organic_pie_df.sort_values(
+        by="organic_farming_share",
+        ascending=False
+    )
+
+    # Keep the top 10 countries only
+    top_10 = organic_pie_df.head(10)
+
+    # Group the remaining countries as Other countries
+    other = pd.DataFrame({
+        "Country": ["Other countries"],
+        "organic_farming_share": [organic_pie_df.iloc[10:]["organic_farming_share"].sum()]
+    })
+
+    # Combine top 10 countries with Other countries
+    organic_pie_df = pd.concat([top_10, other], ignore_index=True)
 
     fig_pie = px.pie(
         organic_pie_df,
         values="organic_farming_share",
         names="Country",
-        title="Organic Farming Share by Country"
+        title="Top 10 Countries by Organic Farming Share"
     )
 
     fig_pie.update_layout(
