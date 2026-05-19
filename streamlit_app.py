@@ -95,8 +95,8 @@ with col_map:
         legend_title_text="Cluster Label"
     )
 
-    st.plotly_chart(fig_map, use_container_width=True)
-st.plotly_chart(fig_map, use_container_width=True, key="cluster_map")
+    st.plotly_chart(fig_map, use_container_width=True, key="cluster_map")
+
 with col_pie:
     st.subheader("Organic Farming Share")
 
@@ -121,13 +121,4 @@ with col_pie:
         legend_title_text="Country"
     )
 
-    st.plotly_chart(fig_pie, use_container_width=True)
-
-    fig_pie.update_layout(
-        height=550,
-        margin=dict(l=0, r=0, t=50, b=0),
-        legend_title_text="Country"
-    )
-
-    st.plotly_chart(fig_pie, use_container_width=True)
-st.plotly_chart(fig_pie, use_container_width=True, key="organic_pie_chart")
+    st.plotly_chart(fig_pie, use_container_width=True, key="organic_pie_chart")
