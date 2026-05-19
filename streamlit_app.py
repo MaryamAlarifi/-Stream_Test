@@ -25,8 +25,8 @@ cluster_df = pd.read_csv("organic_clustering_results.csv")
 
 ########
 # Top row: country selector, selected country indicators, cluster result, and recommendation
-col_select, col_result, col_recommend = st.columns([1.2, 2.2, 2])
-with col_select:
+col1, col2, col3 = st.columns([1.2, 2.2, 2])
+with col1:
     country = st.selectbox(
         "Select a country",
         sorted(cluster_df["Country"].unique())
@@ -35,7 +35,7 @@ with col_select:
 selected_country_df = cluster_df[cluster_df["Country"] == country]
 selected_country = selected_country_df.iloc[0]
 
-with col_select:
+
     st.markdown("**Country Indicators**")
 
     st.caption("Farms Number")
@@ -50,10 +50,12 @@ with col_select:
     st.caption("Organic Farming Share")
     st.write(f"{selected_country['organic_farming_share']:.2f}%")
 
-with col_result:
+with col2:
+   
     st.metric("Selected Country", country)
     st.info(selected_country["Cluster_Label"])
-       st.subheader("Cluster Map")
+
+    st.subheader("Cluster Map")
 
     fig_map = px.choropleth(
         cluster_df,
@@ -81,14 +83,14 @@ with col_result:
     )
 
     fig_map.update_layout(
-        height=430,
+        height=330,
         margin=dict(l=0, r=0, t=35, b=0),
         legend_title_text="Cluster"
     )
 
     st.plotly_chart(fig_map, use_container_width=True, key="cluster_map")
 
-with col_recommend:
+with col3:
     st.write("Recommendation")
     st.success(selected_country["Recommendation"])
 
