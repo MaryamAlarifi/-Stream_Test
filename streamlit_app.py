@@ -23,8 +23,9 @@ st.header("Organic Farming Expansion Clustering")
 cluster_df = pd.read_csv("organic_clustering_results.csv")
 
 ########
-# Top row: country selector, cluster result, recommendation
-col_select, col_result, col_recommend = st.columns([1.2, 1.2, 1.2])
+########
+# Top row: country selector, selected country indicators, cluster result, and recommendation
+col_select, col_result, col_recommend = st.columns([1.3, 1.3, 2])
 
 with col_select:
     country = st.selectbox(
@@ -35,6 +36,21 @@ with col_select:
 selected_country_df = cluster_df[cluster_df["Country"] == country]
 selected_country = selected_country_df.iloc[0]
 
+with col_select:
+    st.markdown("**Country Indicators**")
+
+    st.caption("Farms Number")
+    st.write(f"{selected_country['farms_number']:,.0f}")
+
+    st.caption("Agricultural Area")
+    st.write(f"{selected_country['used_agricultural_area_ha']:,.0f} ha")
+
+    st.caption("Standard Output")
+    st.write(f"€{selected_country['standard_output_EUR']:,.0f}")
+
+    st.caption("Organic Farming Share")
+    st.write(f"{selected_country['organic_farming_share']:.2f}%")
+
 with col_result:
     st.metric("Selected Country", country)
     st.info(selected_country["Cluster_Label"])
@@ -44,18 +60,7 @@ with col_recommend:
     st.success(selected_country["Recommendation"])
 
 ########
-# Selected country data in a compact table
-with st.expander("View selected country data"):
-    display_country_df = selected_country_df[
-        [
-            "Country",
-            "farms_number",
-            "used_agricultural_area_ha",
-            "standard_output_EUR",
-            "organic_farming_share"
-        ]
-    ]
-    st.dataframe(display_country_df, use_container_width=True, height=120)
+
 
 ########
 # Charts row: map, organic pie chart, sentiment circles placeholder
