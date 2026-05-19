@@ -83,7 +83,7 @@ with col2:
     )
 
     fig_map.update_layout(
-        height=330,
+        height=500,
         margin=dict(l=0, r=0, t=35, b=0),
         legend_title_text="Cluster"
     )
@@ -94,11 +94,6 @@ with col3:
     st.write("Recommendation")
     st.success(selected_country["Recommendation"])
 
-
-
-
-
-   
 
 with col3:
     st.subheader("Organic Share")
@@ -133,7 +128,7 @@ with col3:
     )
 
     fig_pie.update_layout(
-        height=430,
+        height=200,
         margin=dict(l=0, r=0, t=35, b=0),
         legend_title_text="Country",
         showlegend=False
