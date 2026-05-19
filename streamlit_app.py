@@ -25,7 +25,7 @@ cluster_df = pd.read_csv("organic_clustering_results.csv")
 
 ########
 # Top row: country selector, selected country indicators, cluster result, and recommendation
-col1, col2, col3 = st.columns([1.2, 2.2, 2])
+col1, col2, col3 = st.columns([2.2,1.2,2])
 with col1:
     country = st.selectbox(
         "Select a country",
@@ -35,7 +35,7 @@ with col1:
 selected_country_df = cluster_df[cluster_df["Country"] == country]
 selected_country = selected_country_df.iloc[0]
 
-with col1:
+
     st.markdown("**Country Indicators**")
 
     st.caption("Farms Number")
