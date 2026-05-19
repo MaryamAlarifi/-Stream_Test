@@ -49,7 +49,44 @@ with col1:
 
     st.caption("Organic Farming Share")
     st.write(f"{selected_country['organic_farming_share']:.2f}%")
+if country == "Ireland":
 
+    st.subheader("Ireland Future Export Prediction")
+
+    future_exports = pd.read_csv("future_export_predictions.csv")
+
+    future_exports["Year"] = future_exports["Year"].astype(int)
+
+    selected_year = st.selectbox(
+        "Select Year",
+        sorted(future_exports["Year"].unique()),
+        key="ireland_export_year_selectbox"
+    )
+
+    selected_category = st.selectbox(
+        "Select Export Category",
+        sorted(future_exports["Category"].unique()),
+        key="ireland_export_category_selectbox"
+    )
+
+    selected_data = future_exports[
+        (future_exports["Year"] == selected_year) &
+        (future_exports["Category"] == selected_category)
+    ]
+
+    if not selected_data.empty:
+        predicted_value = selected_data["Predicted_Amount_EUR"].iloc[0]
+
+        st.metric(
+            label=f"Predicted Export Amount for {selected_category} in {selected_year}",
+            value=f"€{predicted_value:,.0f}"
+        )
+
+    else:
+        st.warning("No data available for this selection.")
+
+else:
+    st.info("Future export prediction is available for Ireland only.")
 with col2:
     st.metric("Selected Country", country)
     st.info(selected_country["Cluster_Label"])
@@ -151,44 +188,3 @@ components.html(html_file, height=500, scrolling=True)
 
 ################################
 
-st.subheader("Future Export Prediction")
-
-future_exports = pd.read_csv("future_export_predictions.csv")
-
-# Make sure Year is integer
-future_exports["Year"] = future_exports["Year"].astype(int)
-
-# Year dropdown
-selected_year = st.selectbox(
-    "Select Year",
-    sorted(future_exports["Year"].unique()),
-    key="export_year_selectbox"
-)
-
-# Category dropdown
-selected_category = st.selectbox(
-    "Select Export Category",
-    sorted(future_exports["Category"].unique()),
-    key="export_category_selectbox"
-)
-
-# Filter selected year and category
-selected_data = future_exports[
-    (future_exports["Year"] == selected_year) &
-    (future_exports["Category"] == selected_category)
-]
-
-if not selected_data.empty:
-    predicted_value = selected_data["Predicted_Amount_EUR"].iloc[0]
-
-    st.metric(
-        label=f"Predicted Export Amount for {selected_category} in {selected_year}",
-        value=f"€{predicted_value:,.0f}"
-    )
-
-    # Trend chart for selected category across all years
-    category_trend = future_exports[
-        future_exports["Category"] == selected_category
-    ].sort_values("Year")
-
-   
