@@ -18,7 +18,7 @@ sentiment analysis results, and export amount prediction.
 ###########################################################
 # Organic farming expansion clustering section
 st.header("Organic Farming Expansion Clustering")
-selected_color_theme = st.selectbox('Select a color theme', color_theme_list)
+
 ###########################################################
 # Load clustering results data
 cluster_df = pd.read_csv("organic_clustering_results.csv")
