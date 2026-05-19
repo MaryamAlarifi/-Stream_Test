@@ -153,45 +153,65 @@ components.html(html_file, height=500, scrolling=True)
 
 st.subheader("Future Export Predictions by Year")
 
-# Read prediction data
 future_exports = pd.read_csv("future_export_predictions.csv")
 
-# Year slider
+# Make sure Year is numeric
+future_exports["Year"] = future_exports["Year"].astype(int)
+
 selected_year = st.slider(
-    "Select Year",
-    int(future_exports["Year"].min()),
-    int(future_exports["Year"].max()),
-    int(future_exports["Year"].min())
+    "Select Year for Export Prediction",
+    min_value=int(future_exports["Year"].min()),
+    max_value=int(future_exports["Year"].max()),
+    value=int(future_exports["Year"].min()),
+    step=1,
+    key="export_prediction_year_slider"
 )
 
-# Filter data for selected year
-year_data = future_exports[future_exports["Year"] == selected_year]
+# Filter data AFTER the slider
+year_data = future_exports[future_exports["Year"] == selected_year].copy()
 
-# Sort values from highest to lowest
 year_data = year_data.sort_values(
     by="Predicted_Amount_EUR",
     ascending=False
 )
 
-# Interactive bar chart
-fig_future_exports = px.bar(
-    year_data,
-    x="Category",
-    y="Predicted_Amount_EUR",
-    title=f"Predicted Export Amount by Category in {selected_year}",
-    labels={
-        "Category": "Export Category",
-        "Predicted_Amount_EUR": "Predicted Amount (€)"
-    },
-    hover_data={
-        "Category": True,
-        "Predicted_Amount_EUR": ":,.0f"
-    }
-)
+st.write("Selected year:", selected_year)
+st.write("Number of rows for this year:", len(year_data))
 
-fig_future_exports.update_layout(
-    xaxis_tickangle=-45,
-    height=600
-)
+if not year_data.empty:
 
-st.plotly_chart(fig_future_exports, use_container_width=True)
+    top_category = year_data.iloc[0]
+
+    st.metric(
+        label=f"Highest Predicted Export Category in {selected_year}",
+        value=top_category["Category"],
+        delta=f"€{top_category['Predicted_Amount_EUR']:,.0f}"
+    )
+
+    fig_future_exports = px.bar(
+        year_data,
+        x="Category",
+        y="Predicted_Amount_EUR",
+        title=f"Predicted Export Amount by Category in {selected_year}",
+        labels={
+            "Category": "Export Category",
+            "Predicted_Amount_EUR": "Predicted Amount (€)"
+        },
+        hover_data={
+            "Predicted_Amount_EUR": ":,.0f"
+        }
+    )
+
+    fig_future_exports.update_layout(
+        xaxis_tickangle=-45,
+        height=600
+    )
+
+    st.plotly_chart(
+        fig_future_exports,
+        use_container_width=True,
+        key=f"future_exports_chart_{selected_year}"
+    )
+
+else:
+    st.warning("No data available for the selected year.")
