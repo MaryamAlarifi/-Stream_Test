@@ -51,27 +51,27 @@ with col1:
     st.write(f"{selected_country['organic_farming_share']:.2f}%")
 
 with col2:
-   
     st.metric("Selected Country", country)
     st.info(selected_country["Cluster_Label"])
 
-    st.subheader("Cluster Map")
+    st.subheader("Used Agricultural Area by Country")
 
     fig_map = px.choropleth(
         cluster_df,
         locations="Country",
         locationmode="country names",
-        color="Cluster_Label",
+        color="used_agricultural_area_ha",
         hover_name="Country",
         hover_data=[
-            "Cluster_Label",
+            "used_agricultural_area_ha",
             "organic_farming_share",
             "farms_number",
-            "used_agricultural_area_ha",
-            "standard_output_EUR"
+            "standard_output_EUR",
+            "Cluster_Label"
         ],
-        title="Organic Farming Expansion Clusters",
-        projection="natural earth"
+        title="",
+        projection="natural earth",
+        color_continuous_scale="Greens"
     )
 
     fig_map.update_geos(
@@ -79,17 +79,23 @@ with col2:
         showcoastlines=True,
         showland=True,
         showcountries=True,
-        fitbounds="locations"
+        lataxis_range=[35, 72],
+        lonaxis_range=[-15, 35]
     )
 
     fig_map.update_layout(
-        height=200,
-        margin=dict(l=0, r=0, t=35, b=0),
-        legend_title_text="Cluster"
+        height=420,
+        margin=dict(l=0, r=0, t=10, b=0),
+        coloraxis_colorbar=dict(
+            title="Area (ha)"
+        )
     )
 
-    st.plotly_chart(fig_map, use_container_width=True, key="cluster_map")
-
+    st.plotly_chart(
+        fig_map,
+        use_container_width=True,
+        key="agricultural_area_map"
+    )
 with col3:
     st.write("Recommendation")
     st.success(selected_country["Recommendation"])
