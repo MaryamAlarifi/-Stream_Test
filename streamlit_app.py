@@ -84,7 +84,7 @@ with col2:
     )
 
     fig_map.update_layout(
-        height=420,
+        height=300,
         margin=dict(l=0, r=0, t=10, b=0),
         coloraxis_colorbar=dict(
             title="Area (ha)"
