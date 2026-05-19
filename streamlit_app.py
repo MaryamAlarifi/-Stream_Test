@@ -123,7 +123,7 @@ with col_pie:
 
     fig_pie = px.pie(
         organic_pie_df,
-        values="organic_farming_share",
+       
         names="Country",
         title="Top 10 Countries by Organic Farming Share"
     )
