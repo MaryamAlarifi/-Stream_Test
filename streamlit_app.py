@@ -64,33 +64,56 @@ st.info(selected_country["Cluster_Label"])
 
 st.success(selected_country["Recommendation"])
 ###############################################
-# Create cluster map
-fig_map = px.choropleth(
-    cluster_df,
-    locations="Country",
-    locationmode="country names",
-    color="Cluster_Label",
-    hover_name="Country",
-    title="Organic Farming Expansion Clusters by Country",
-    projection="natural earth"
-)
+########
+# Display map and pie chart side by side
+col_map, col_pie = st.columns([2, 1])
 
-##############################################
-# Adjust map layout and zoom
-fig_map.update_geos(
-    scope="europe",
-    showcoastlines=True,
-    showland=True,
-    showcountries=True,
-    fitbounds="locations"
-)
+with col_map:
+    st.subheader("Organic Farming Expansion Clusters by Country")
 
-fig_map.update_layout(
-    height=600,
-    margin=dict(l=0, r=0, t=50, b=0),
-    legend_title_text="Cluster Label"
-)
+    fig_map = px.choropleth(
+        cluster_df,
+        locations="Country",
+        locationmode="country names",
+        color="Cluster_Label",
+        hover_name="Country",
+        title="Organic Farming Expansion Clusters by Country",
+        projection="natural earth"
+    )
 
-#############################################
-# Display the map
-st.plotly_chart(fig_map, use_container_width=True)
+    fig_map.update_geos(
+        scope="europe",
+        showcoastlines=True,
+        showland=True,
+        showcountries=True,
+        fitbounds="locations"
+    )
+
+    fig_map.update_layout(
+        height=550,
+        margin=dict(l=0, r=0, t=50, b=0),
+        legend_title_text="Cluster Label"
+    )
+
+    st.plotly_chart(fig_map, use_container_width=True)
+
+with col_pie:
+    st.subheader("Organic Farming Share")
+
+    organic_pie_df = cluster_df.copy()
+    organic_pie_df = organic_pie_df.dropna(subset=["organic_farming_share"])
+
+    fig_pie = px.pie(
+        organic_pie_df,
+        values="organic_farming_share",
+        names="Country",
+        title="Organic Farming Share by Country"
+    )
+
+    fig_pie.update_layout(
+        height=550,
+        margin=dict(l=0, r=0, t=50, b=0),
+        legend_title_text="Country"
+    )
+
+    st.plotly_chart(fig_pie, use_container_width=True)
