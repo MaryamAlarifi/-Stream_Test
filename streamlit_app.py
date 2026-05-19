@@ -22,27 +22,35 @@ st.header("Organic Farming Expansion Clustering")
 
 cluster_df = pd.read_csv("organic_clustering_results.csv")
 
+cluster_df = pd.read_csv("organic_clustering_results.csv")
+
 country = st.selectbox(
     "Select a country",
     sorted(cluster_df["Country"].unique())
 )
 
-selected_country = cluster_df[cluster_df["Country"] == country].iloc[0]
+selected_country_df = cluster_df[cluster_df["Country"] == country]
 
-st.subheader("Country Cluster Result")
+st.subheader("Selected Country Data")
 
+display_country_df = selected_country_df[
+    [
+        "Country",
+        "farms_number",
+        "used_agricultural_area_ha",
+        "standard_output_EUR",
+        "organic_farming_share"
+    ]
+]
+
+st.dataframe(display_country_df, use_container_width=True)
+
+selected_country = selected_country_df.iloc[0]
+
+st.subheader("Cluster Result")
 st.metric("Selected Country", country)
-st.subheader("Dataset Preview")
-
-display_df = cluster_df.drop(
-    columns=["Cluster", "Cluster_Label"],
-    errors="ignore"
-)
-
-st.dataframe(display_df)
-st.info(selected_country["Cluster_Label"])
-
-fig_map = px.choropleth(
+st.metric("Cluster", int(selected_country["Cluster"]))
+st.info(selected_country["Cluster_Label"])fig_map = px.choropleth(
     cluster_df,
     locations="Country",
     locationmode="country names",
