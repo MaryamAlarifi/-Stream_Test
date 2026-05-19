@@ -141,3 +141,8 @@ with col3:
     )
 
     st.plotly_chart(fig_pie, use_container_width=True, key="organic_pie_chart")
+######################################
+with open("sentiment_by_search.html", "r", encoding="utf-8") as f:
+    html_file = f.read()
+
+components.html(html_file, height=600, scrolling=True)
