@@ -99,10 +99,9 @@ with col_map:
 
 with col_pie:
     st.subheader("Organic Farming Share")
-organic_pie_df.loc[
+    organic_pie_df.loc[
     organic_pie_df["organic_farming_share"] < 3,
-    "Country"
-] = "Other countries"
+    "Country"] = "Other countries"
 
     organic_pie_df = cluster_df.copy()
     organic_pie_df = organic_pie_df.dropna(subset=["organic_farming_share"])
