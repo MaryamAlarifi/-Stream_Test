@@ -134,7 +134,7 @@ with col3:
     )
 
     fig_pie.update_layout(
-        height=200,
+        height=250,
         margin=dict(l=0, r=0, t=35, b=0),
         legend_title_text="Country",
         showlegend=False
