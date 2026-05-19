@@ -25,16 +25,17 @@ cluster_df = pd.read_csv("organic_clustering_results.csv")
 
 ########
 # Top row: country selector, selected country indicators, cluster result, and recommendation
-col1, col2, col3 = st.columns([2.2,1.2,2])
+col1, col2, col3 = st.columns([2.2, 1.2, 2])
+
 with col1:
     country = st.selectbox(
         "Select a country",
-        sorted(cluster_df["Country"].unique())
+        sorted(cluster_df["Country"].unique()),
+        key="country_selectbox"
     )
 
-selected_country_df = cluster_df[cluster_df["Country"] == country]
-selected_country = selected_country_df.iloc[0]
-
+    selected_country_df = cluster_df[cluster_df["Country"] == country]
+    selected_country = selected_country_df.iloc[0]
 
     st.markdown("**Country Indicators**")
 
@@ -49,44 +50,45 @@ selected_country = selected_country_df.iloc[0]
 
     st.caption("Organic Farming Share")
     st.write(f"{selected_country['organic_farming_share']:.2f}%")
-if country == "Ireland":
 
-    st.subheader("Ireland Future Export Prediction")
+    # Show export prediction only when Ireland is selected
+    if country == "Ireland":
 
-    future_exports = pd.read_csv("future_export_predictions.csv")
+        st.subheader("Ireland Future Export Prediction")
 
-    future_exports["Year"] = future_exports["Year"].astype(int)
+        future_exports = pd.read_csv("future_export_predictions.csv")
+        future_exports["Year"] = future_exports["Year"].astype(int)
 
-    selected_year = st.selectbox(
-        "Select Year",
-        sorted(future_exports["Year"].unique()),
-        key="ireland_export_year_selectbox"
-    )
-
-    selected_category = st.selectbox(
-        "Select Export Category",
-        sorted(future_exports["Category"].unique()),
-        key="ireland_export_category_selectbox"
-    )
-
-    selected_data = future_exports[
-        (future_exports["Year"] == selected_year) &
-        (future_exports["Category"] == selected_category)
-    ]
-
-    if not selected_data.empty:
-        predicted_value = selected_data["Predicted_Amount_EUR"].iloc[0]
-
-        st.metric(
-            label=f"Predicted Export Amount for {selected_category} in {selected_year}",
-            value=f"€{predicted_value:,.0f}"
+        selected_year = st.selectbox(
+            "Select Year",
+            sorted(future_exports["Year"].unique()),
+            key="ireland_export_year_selectbox"
         )
 
-    else:
-        st.warning("No data available for this selection.")
+        selected_category = st.selectbox(
+            "Select Export Category",
+            sorted(future_exports["Category"].unique()),
+            key="ireland_export_category_selectbox"
+        )
 
-else:
-    st.info("Future export prediction is available for Ireland only.")
+        selected_data = future_exports[
+            (future_exports["Year"] == selected_year) &
+            (future_exports["Category"] == selected_category)
+        ]
+
+        if not selected_data.empty:
+            predicted_value = selected_data["Predicted_Amount_EUR"].iloc[0]
+
+            st.metric(
+                label=f"Predicted Export Amount for {selected_category} in {selected_year}",
+                value=f"€{predicted_value:,.0f}"
+            )
+
+        else:
+            st.warning("No data available for this selection.")
+
+    else:
+        st.info("Future export prediction is available for Ireland only.")
 with col2:
     st.metric("Selected Country", country)
     st.info(selected_country["Cluster_Label"])
