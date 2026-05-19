@@ -104,7 +104,7 @@ with col_pie:
     organic_pie_df = organic_pie_df.dropna(subset=["organic_farming_share"])
 
     organic_pie_df.loc[
-        organic_pie_df["organic_farming_share"] < 3,
+        organic_pie_df["organic_farming_share"] < 3.00,
         "Country"
     ] = "Other countries"
 
