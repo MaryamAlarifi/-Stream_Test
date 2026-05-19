@@ -11,8 +11,9 @@ st.set_page_config(page_title="Agricultural ML Dashboard", layout="wide")
 # Dashboard title and introduction
 st.title("🌾 Agricultural Dashboard")
 st.write("""
-This dashboard presents clustering results for organic farming expansion, 
-sentiment analysis results, and export amount prediction.
+This dashboard is designed to support farmers by helping them understand their country's readiness 
+for organic farming expansion. It also provides future predictions for Ireland's agricultural export 
+values in the coming years.
 """)
 
 ###########################################################
@@ -53,18 +54,15 @@ st.dataframe(display_country_df, use_container_width=True)
 selected_country = selected_country_df.iloc[0]
 
 ###########################################################
+########
 # Display cluster result
-st.subheader("Cluster Result")
-col1, col2 = st.columns(2)
+st.subheader("Organic Farming Expansion Result")
 
-with col1:
-    st.metric("Selected Country", country)
-
-with col2:
-    st.metric("Cluster", int(selected_country["Cluster"]))
+st.metric("Selected Country", country)
 
 st.info(selected_country["Cluster_Label"])
 
+st.success(selected_country["Recommendation"])
 ###############################################
 # Create cluster map
 fig_map = px.choropleth(
