@@ -25,7 +25,7 @@ cluster_df = pd.read_csv("organic_clustering_results.csv")
 
 ########
 # Top row: country selector, selected country indicators, cluster result, and recommendation
-col1, col2, col3 = st.columns([2.2,2,1.2])
+col1, col2, col3 = st.columns([2.1,2,1.3])
 
 with col1:
     country_list = sorted(cluster_df["Country"].unique())
