@@ -292,6 +292,6 @@ with right_col:
     # Display sentiment chart in Streamlit
     components.html(
         html_file,
-        height=420,
+        height=400,
         scrolling=True
     )
