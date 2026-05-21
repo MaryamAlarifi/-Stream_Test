@@ -262,6 +262,7 @@ with right_col:
         fig_pie.update_traces(
             textposition="inside",
             textinfo="percent"
+                        hovertemplate="<b>%{label}</b><br>Percentage: %{percent}<extra></extra>"
         )
 
         # Adjust pie chart layout
