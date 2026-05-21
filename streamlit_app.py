@@ -269,7 +269,7 @@ with right_col:
             height=250,
             margin=dict(l=0, r=0, t=35, b=0),
             legend_title_text="Country",
-            showlegend=False
+            showlegend=True
         )
 
         # Display pie chart
