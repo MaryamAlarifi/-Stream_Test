@@ -3,38 +3,58 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 import streamlit.components.v1 as components
-############################################################
-# Page configuration
-st.set_page_config(page_title="Agricultural ML Dashboard", layout="wide")
+
 
 ############################################################
+# Page configuration
+
+st.set_page_config(
+    page_title="Agricultural ML Dashboard",
+    layout="wide"
+)
+
+
+############################################################
+# Dashboard title and description
+
 st.title("🌾 Agricultural Dashboard")
 
 st.caption(
-    "A farmer-focused dashboard for organic farming , sentiment insights, and Ireland export prediction."
+    "A farmer-focused dashboard for organic farming, sentiment insights, and Ireland export prediction."
 )
-###########################################################
-########
+
+
+############################################################
 # Organic farming expansion clustering section
+
 st.header("Organic Farming Expansion Clustering")
 
-########
 # Load clustering results data
 cluster_df = pd.read_csv("organic_clustering_results.csv")
 
 
-########
-# Top row: country selector, selected country indicators, cluster result, and recommendation
-col1, col2, col3 = st.columns([2,2,2])
+############################################################
+# Top row layout
+
+# Create three columns for country details, map, and recommendation
+col1, col2, col3 = st.columns([2, 2, 2])
+
+
+############################################################
+# Column 1: Country selector, indicators, and Ireland export prediction
 
 with col1:
+
+    # Create a sorted country list
     country_list = sorted(cluster_df["Country"].unique())
 
+    # Set Ireland as the default country if it exists
     if "Ireland" in country_list:
         default_country_index = country_list.index("Ireland")
     else:
         default_country_index = 0
 
+    # Create country selectbox
     country = st.selectbox(
         "Select a country",
         country_list,
@@ -42,66 +62,99 @@ with col1:
         key="country_selectbox"
     )
 
+    # Filter data for the selected country
     selected_country_df = cluster_df[cluster_df["Country"] == country]
+
+    # Select the first row for the selected country
     selected_country = selected_country_df.iloc[0]
 
+    # Show country indicators
     st.markdown("**Country Indicators**")
 
+    # Show number of farms
     st.caption("Farms Number")
     st.write(f"{selected_country['farms_number']:,.0f}")
 
+    # Show agricultural area
     st.caption("Agricultural Area")
     st.write(f"{selected_country['used_agricultural_area_ha']:,.0f} ha")
 
+    # Show standard output
     st.caption("Standard Output")
     st.write(f"€{selected_country['standard_output_EUR']:,.0f}")
 
+    # Show organic farming share
     st.caption("Organic Farming Share")
     st.write(f"{selected_country['organic_farming_share']:.2f}%")
 
+    # Show export prediction only for Ireland
     if country == "Ireland":
 
+        # Add export prediction subtitle
         st.subheader("Ireland Future Export Prediction")
 
+        # Load future export prediction data
         future_exports = pd.read_csv("future_export_predictions.csv")
+
+        # Convert Year column to integer
         future_exports["Year"] = future_exports["Year"].astype(int)
 
+        # Create year selectbox
         selected_year = st.selectbox(
             "Select Year",
             sorted(future_exports["Year"].unique()),
             key="ireland_export_year_selectbox"
         )
 
+        # Create export category selectbox
         selected_category = st.selectbox(
             "Select Export Category",
             sorted(future_exports["Category"].unique()),
             key="ireland_export_category_selectbox"
         )
 
+        # Filter prediction data by selected year and category
         selected_data = future_exports[
             (future_exports["Year"] == selected_year) &
             (future_exports["Category"] == selected_category)
         ]
 
+        # Display prediction if data exists
         if not selected_data.empty:
+
+            # Get predicted export amount
             predicted_value = selected_data["Predicted_Amount_EUR"].iloc[0]
 
+            # Show predicted export amount
             st.metric(
                 label=f"Predicted Export Amount for {selected_category} in {selected_year}",
                 value=f"€{predicted_value:,.0f}"
             )
 
+        # Show warning if there is no matching data
         else:
             st.warning("No data available for this selection.")
 
+    # Show message for other countries
     else:
         st.info("Future export prediction is available for Ireland only.")
+
+
+############################################################
+# Column 2: Selected country cluster and agricultural area map
+
 with col2:
+
+    # Show selected country
     st.metric("Selected Country", country)
+
+    # Show cluster label
     st.info(selected_country["Cluster_Label"])
 
+    # Add map subtitle
     st.subheader("Used Agricultural Area by Country")
 
+    # Create choropleth map
     fig_map = px.choropleth(
         cluster_df,
         locations="Country",
@@ -120,6 +173,7 @@ with col2:
         color_continuous_scale="Greens"
     )
 
+    # Focus the map on Europe
     fig_map.update_geos(
         scope="europe",
         showcoastlines=True,
@@ -129,6 +183,7 @@ with col2:
         lonaxis_range=[-15, 35]
     )
 
+    # Adjust map layout
     fig_map.update_layout(
         height=300,
         margin=dict(l=0, r=0, t=10, b=0),
@@ -137,36 +192,55 @@ with col2:
         )
     )
 
+    # Display map
     st.plotly_chart(
         fig_map,
         use_container_width=True,
         key="agricultural_area_map"
     )
+
+
+############################################################
+# Column 3: Recommendation and organic share pie chart
+
 with col3:
+
+    # Show recommendation title
     st.write("Recommendation")
+
+    # Show recommendation for selected country
     st.success(selected_country["Recommendation"])
 
-
-with col3:
+    # Add organic share subtitle
     st.subheader("Organic Share")
 
+    # Copy data for pie chart
     organic_pie_df = cluster_df.copy()
+
+    # Remove missing organic share values
     organic_pie_df = organic_pie_df.dropna(subset=["organic_farming_share"])
 
+    # Sort countries by organic farming share
     organic_pie_df = organic_pie_df.sort_values(
         by="organic_farming_share",
         ascending=False
     )
 
+    # Select top 10 countries
     top_10 = organic_pie_df.head(10)
 
+    # Group remaining countries as Other countries
     other = pd.DataFrame({
         "Country": ["Other countries"],
-        "organic_farming_share": [organic_pie_df.iloc[10:]["organic_farming_share"].sum()]
+        "organic_farming_share": [
+            organic_pie_df.iloc[10:]["organic_farming_share"].sum()
+        ]
     })
 
+    # Combine top 10 countries with Other countries
     organic_pie_df = pd.concat([top_10, other], ignore_index=True)
 
+    # Create pie chart
     fig_pie = px.pie(
         organic_pie_df,
         values="organic_farming_share",
@@ -174,11 +248,13 @@ with col3:
         title="Top 10 Organic Farming Share"
     )
 
+    # Show percentages inside the chart
     fig_pie.update_traces(
         textposition="inside",
         textinfo="percent"
     )
 
+    # Adjust pie chart layout
     fig_pie.update_layout(
         height=250,
         margin=dict(l=0, r=0, t=35, b=0),
@@ -186,14 +262,24 @@ with col3:
         showlegend=False
     )
 
-    st.plotly_chart(fig_pie, use_container_width=True, key="organic_pie_chart")
-######################################
+    # Display pie chart
+    st.plotly_chart(
+        fig_pie,
+        use_container_width=True,
+        key="organic_pie_chart"
+    )
+
+
+############################################################
+# Sentiment analysis interactive chart
+
+# Read saved interactive sentiment HTML chart
 with open("sentiment_by_search.html", "r", encoding="utf-8") as f:
     html_file = f.read()
 
-components.html(html_file, height=500, scrolling=True)
-#######################################
-
-
-################################
-
+# Display sentiment chart in Streamlit
+components.html(
+    html_file,
+    height=500,
+    scrolling=True
+)
