@@ -148,10 +148,9 @@ with left_col:
 with right_col:
 
     # Create two columns inside the right side
-        col1, col2 = st.columns([2, 2])
+    col1, col2 = st.columns([2, 2])
 
-
-    ############################################################
+############################################################
     # Map column
 
     with col1:
