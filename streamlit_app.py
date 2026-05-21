@@ -264,21 +264,22 @@ with right_col:
             textinfo="percent"
         )
 
- fig_pie.update_layout(
-    height=400,
-    margin=dict(l=0, r=160, t=35, b=0),
-    legend_title_text="Country",
-    showlegend=True,
-    legend=dict(
-        orientation="v",
-        yanchor="top",
-        y=1,
-        xanchor="left",
-        x=1.02,
-        itemclick=False,
-        itemdoubleclick=False
-    )
-)
+        # Adjust pie chart layout
+        fig_pie.update_layout(
+            height=400,
+            margin=dict(l=0, r=160, t=35, b=0),
+            legend_title_text="Country",
+            showlegend=True,
+            legend=dict(
+                orientation="v",
+                yanchor="top",
+                y=1,
+                xanchor="left",
+                x=1.02,
+                itemclick=False,
+                itemdoubleclick=False
+            )
+        )
 
         # Display pie chart
         st.plotly_chart(
@@ -286,8 +287,6 @@ with right_col:
             use_container_width=True,
             key="organic_pie_chart"
         )
-
-
     ############################################################
     # Sentiment analysis interactive chart under map and pie chart
 
