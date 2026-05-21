@@ -261,7 +261,7 @@ with right_col:
         # Show percentages inside the chart
         fig_pie.update_traces(
             textposition="inside",
-            textinfo="percent"
+            textinfo="percent",
                         hovertemplate="<b>%{label}</b><br>Percentage: %{percent}<extra></extra>"
         )
 
