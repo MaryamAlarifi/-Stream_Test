@@ -264,9 +264,9 @@ with right_col:
             textinfo="percent"
         )
 
-       fig_pie.update_layout(
+ fig_pie.update_layout(
     height=400,
-    margin=dict(l=0, r=150, t=35, b=0),
+    margin=dict(l=0, r=160, t=35, b=0),
     legend_title_text="Country",
     showlegend=True,
     legend=dict(
@@ -274,10 +274,10 @@ with right_col:
         yanchor="top",
         y=1,
         xanchor="left",
-        x=1.02
-    ),
-    legend_itemclick=False,
-    legend_itemdoubleclick=False
+        x=1.02,
+        itemclick=False,
+        itemdoubleclick=False
+    )
 )
 
         # Display pie chart
