@@ -34,16 +34,18 @@ cluster_df = pd.read_csv("organic_clustering_results.csv")
 
 
 ############################################################
-# Top row layout
+# Main layout
 
-# Create three columns for country details, map, and recommendation
-col1, col2, col3 = st.columns([2, 2, 2])
+# Create two main columns:
+# left column for country indicators and Ireland prediction
+# right column for map, recommendation, pie chart, and sentiment chart
+left_col, right_col = st.columns([2, 4])
 
 
 ############################################################
-# Column 1: Country selector, indicators, and Ireland export prediction
+# Left column: Country selector, indicators, and Ireland export prediction
 
-with col1:
+with left_col:
 
     # Create a sorted country list
     country_list = sorted(cluster_df["Country"].unique())
@@ -141,145 +143,156 @@ with col1:
 
 
 ############################################################
-# Column 2: Selected country cluster and agricultural area map
+# Right column: Map, recommendation, pie chart, and sentiment chart
 
-with col2:
+with right_col:
 
-    # Show selected country
-    st.metric("Selected Country", country)
+    # Create two columns inside the right side
+       col1, col2 = st.columns([2, 2])
 
-    # Show cluster label
-    st.info(selected_country["Cluster_Label"])
 
-    # Add map subtitle
-    st.subheader("Used Agricultural Area by Country")
+    ############################################################
+    # Map column
 
-    # Create choropleth map
-    fig_map = px.choropleth(
-        cluster_df,
-        locations="Country",
-        locationmode="country names",
-        color="used_agricultural_area_ha",
-        hover_name="Country",
-        hover_data=[
-            "used_agricultural_area_ha",
-            "organic_farming_share",
-            "farms_number",
-            "standard_output_EUR",
-            "Cluster_Label"
-        ],
-        title="",
-        projection="natural earth",
-        color_continuous_scale="Greens"
-    )
+    with col1:
 
-    # Focus the map on Europe
-    fig_map.update_geos(
-        scope="europe",
-        showcoastlines=True,
-        showland=True,
-        showcountries=True,
-        lataxis_range=[35, 72],
-        lonaxis_range=[-15, 35]
-    )
+        # Show selected country
+        st.metric("Selected Country", country)
 
-    # Adjust map layout
-    fig_map.update_layout(
-        height=300,
-        margin=dict(l=0, r=0, t=10, b=0),
-        coloraxis_colorbar=dict(
-            title="Area (ha)"
+        # Show cluster label
+        st.info(selected_country["Cluster_Label"])
+
+        # Add map subtitle
+        st.subheader("Used Agricultural Area by Country")
+
+        # Create choropleth map
+        fig_map = px.choropleth(
+            cluster_df,
+            locations="Country",
+            locationmode="country names",
+            color="used_agricultural_area_ha",
+            hover_name="Country",
+            hover_data=[
+                "used_agricultural_area_ha",
+                "organic_farming_share",
+                "farms_number",
+                "standard_output_EUR",
+                "Cluster_Label"
+            ],
+            title="",
+            projection="natural earth",
+            color_continuous_scale="Greens"
         )
+
+        # Focus the map on Europe
+        fig_map.update_geos(
+            scope="europe",
+            showcoastlines=True,
+            showland=True,
+            showcountries=True,
+            lataxis_range=[35, 72],
+            lonaxis_range=[-15, 35]
+        )
+
+        # Adjust map layout
+        fig_map.update_layout(
+            height=300,
+            margin=dict(l=0, r=0, t=10, b=0),
+            coloraxis_colorbar=dict(
+                title="Area (ha)"
+            )
+        )
+
+        # Display map
+        st.plotly_chart(
+            fig_map,
+            use_container_width=True,
+            key="agricultural_area_map"
+        )
+
+
+    ############################################################
+    # Recommendation and pie chart column
+
+    with col2:
+
+        # Show recommendation title
+        st.write("Recommendation")
+
+        # Show recommendation for selected country
+        st.success(selected_country["Recommendation"])
+
+        # Add organic share subtitle
+        st.subheader("Organic Share")
+
+        # Copy data for pie chart
+        organic_pie_df = cluster_df.copy()
+
+        # Remove missing organic share values
+        organic_pie_df = organic_pie_df.dropna(subset=["organic_farming_share"])
+
+        # Sort countries by organic farming share
+        organic_pie_df = organic_pie_df.sort_values(
+            by="organic_farming_share",
+            ascending=False
+        )
+
+        # Select top 10 countries
+        top_10 = organic_pie_df.head(10)
+
+        # Group remaining countries as Other countries
+        other = pd.DataFrame({
+            "Country": ["Other countries"],
+            "organic_farming_share": [
+                organic_pie_df.iloc[10:]["organic_farming_share"].sum()
+            ]
+        })
+
+        # Combine top 10 countries with Other countries
+        organic_pie_df = pd.concat([top_10, other], ignore_index=True)
+
+        # Create pie chart
+        fig_pie = px.pie(
+            organic_pie_df,
+            values="organic_farming_share",
+            names="Country",
+            title="Top 10 Organic Farming Share"
+        )
+
+        # Show percentages inside the chart
+        fig_pie.update_traces(
+            textposition="inside",
+            textinfo="percent"
+        )
+
+        # Adjust pie chart layout
+        fig_pie.update_layout(
+            height=250,
+            margin=dict(l=0, r=0, t=35, b=0),
+            legend_title_text="Country",
+            showlegend=False
+        )
+
+        # Display pie chart
+        st.plotly_chart(
+            fig_pie,
+            use_container_width=True,
+            key="organic_pie_chart"
+        )
+
+
+    ############################################################
+    # Sentiment analysis interactive chart under map and pie chart
+
+    st.subheader("Sentiment Analysis")
+
+    # Read saved interactive sentiment HTML chart
+    with open("sentiment_by_search.html", "r", encoding="utf-8") as f:
+        html_file = f.read()
+
+    # Display sentiment chart in Streamlit
+    components.html(
+        html_file,
+        height=420,
+        scrolling=True
     )
-
-    # Display map
-    st.plotly_chart(
-        fig_map,
-        use_container_width=True,
-        key="agricultural_area_map"
-    )
-
-
-############################################################
-# Column 3: Recommendation and organic share pie chart
-
-with col3:
-
-    # Show recommendation title
-    st.write("Recommendation")
-
-    # Show recommendation for selected country
-    st.success(selected_country["Recommendation"])
-
-    # Add organic share subtitle
-    st.subheader("Organic Share")
-
-    # Copy data for pie chart
-    organic_pie_df = cluster_df.copy()
-
-    # Remove missing organic share values
-    organic_pie_df = organic_pie_df.dropna(subset=["organic_farming_share"])
-
-    # Sort countries by organic farming share
-    organic_pie_df = organic_pie_df.sort_values(
-        by="organic_farming_share",
-        ascending=False
-    )
-
-    # Select top 10 countries
-    top_10 = organic_pie_df.head(10)
-
-    # Group remaining countries as Other countries
-    other = pd.DataFrame({
-        "Country": ["Other countries"],
-        "organic_farming_share": [
-            organic_pie_df.iloc[10:]["organic_farming_share"].sum()
-        ]
-    })
-
-    # Combine top 10 countries with Other countries
-    organic_pie_df = pd.concat([top_10, other], ignore_index=True)
-
-    # Create pie chart
-    fig_pie = px.pie(
-        organic_pie_df,
-        values="organic_farming_share",
-        names="Country",
-        title="Top 10 Organic Farming Share"
-    )
-
-    # Show percentages inside the chart
-    fig_pie.update_traces(
-        textposition="inside",
-        textinfo="percent"
-    )
-
-    # Adjust pie chart layout
-    fig_pie.update_layout(
-        height=250,
-        margin=dict(l=0, r=0, t=35, b=0),
-        legend_title_text="Country",
-        showlegend=False
-    )
-
-    # Display pie chart
-    st.plotly_chart(
-        fig_pie,
-        use_container_width=True,
-        key="organic_pie_chart"
-    )
-
-
-############################################################
-# Sentiment analysis interactive chart
-
-# Read saved interactive sentiment HTML chart
-with open("sentiment_by_search.html", "r", encoding="utf-8") as f:
-    html_file = f.read()
-
-# Display sentiment chart in Streamlit
-components.html(
-    html_file,
-    height=500,
-    scrolling=True
-)
