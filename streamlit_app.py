@@ -268,7 +268,7 @@ with right_col:
         # Adjust pie chart layout
         fig_pie.update_layout(
             height=250,
-            margin=dict(l=0, r=130, t=30, b=0),
+            margin=dict(l=0, r=140, t=30, b=0),
             legend_title_text="Country",
             showlegend=True,
             legend=dict(
