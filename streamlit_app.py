@@ -264,13 +264,21 @@ with right_col:
             textinfo="percent"
         )
 
-        # Adjust pie chart layout
-        fig_pie.update_layout(
-            height=250,
-            margin=dict(l=0, r=0, t=35, b=0),
-            legend_title_text="Country",
-            showlegend=True
-        )
+       fig_pie.update_layout(
+    height=400,
+    margin=dict(l=0, r=150, t=35, b=0),
+    legend_title_text="Country",
+    showlegend=True,
+    legend=dict(
+        orientation="v",
+        yanchor="top",
+        y=1,
+        xanchor="left",
+        x=1.02
+    ),
+    legend_itemclick=False,
+    legend_itemdoubleclick=False
+)
 
         # Display pie chart
         st.plotly_chart(
